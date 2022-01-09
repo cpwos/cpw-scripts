@@ -2,40 +2,107 @@
 
 cd /tmp
 
+# Verify if exists programs
+
+if [ -f /bin/wget ]; then
+	echo "- wget found"
+else
+	echo "- Install wget for downloading files"
+	exit 1
+fi
+if [ -f /bin/curl ]; then
+	echo "- curl found"
+else
+	echo "- Install curl for downloading files"
+	exit 1
+fi
+
+# Fonts
+curl -s https://api.github.com/repos/cpwos/linux-resources/releases/latest \
+	| grep "browser_download_url" \
+	| grep "linux-fonts.tar.gz" \
+	| cut -d : -f 2,3 \
+	| tr -d \" \
+	| wget -qi -
+
+if [ -f linux-fonts.tar.gz ]; then
+	gunzip linux-fonts.tar.gz && \
+	tar xf linux-fonts.tar && \
+	rm -rf linux-fonts.tar && \
+	mv -f linux-fonts/* /usr/share/fonts && \
+	rm -rf linux-fonts
+	echo "- Fonts installed successfully"
+else
+	echo "- Error trying to install linux-fonts.tar.gz"
+	exit 1
+fi
+
 # Icons
-curl -s https://api.github.com/repos/cpwonline/linux-resources/releases/latest \
+curl -s https://api.github.com/repos/cpwos/linux-resources/releases/latest \
 	| grep "browser_download_url" \
 	| grep "linux-icons.tar.gz" \
 	| cut -d : -f 2,3 \
 	| tr -d \" \
 	| wget -qi -
-gunzip linux-icons.tar.gz
-tar xf linux-icons.tar
-rm -rf linux-icons.tar
-mv -f linux-icons/* /usr/share/icons
-rm -rf linux-icons
+
+if [ -f linux-icons.tar.gz ]; then
+	gunzip linux-icons.tar.gz && \
+	tar xf linux-icons.tar && \
+	rm -rf linux-icons.tar && \
+	mv -f linux-icons/* /usr/share/icons && \
+	rm -rf linux-icons
+	echo "- Icons installed successfully"
+else
+	echo "- Error trying to install linux-icons.tar.gz"
+	exit 1
+fi
 
 # Themes
-curl -s https://api.github.com/repos/cpwonline/linux-resources/releases/latest \
+
+## General themes
+curl -s https://api.github.com/repos/cpwos/linux-resources/releases/latest \
 	| grep "browser_download_url" \
 	| grep "linux-themes.tar.gz" \
 	| cut -d : -f 2,3 \
 	| tr -d \" \
 	| wget -qi -
-gunzip linux-themes.tar.gz
-tar xf linux-themes.tar
-rm -rf linux-themes.tar
-mv -f linux-themes/* /usr/share/themes
-rm -rf linux-themes
 
-wget https://github.com/cpwonline/cpw-openbox-dark-theme/archive/refs/heads/master.zip -O cpw-openbox-dark-theme.zip
-unzip cpw-openbox-dark-theme.zip
-rm -rf cpw-openbox-dark-theme.zip
-mv cpw-openbox-dark-theme-master cpw-openbox-dark-theme
-mv cpw-openbox-dark-theme /usr/share/themes
 
-wget https://github.com/cpwonline/cpw-openbox-light-theme/archive/refs/heads/master.zip -O cpw-openbox-light-theme.zip
-unzip cpw-openbox-light-theme.zip
-rm -rf cpw-openbox-light-theme.zip
-mv cpw-openbox-light-theme-master cpw-openbox-light-theme
-mv cpw-openbox-light-theme /usr/share/themes
+if [ -f linux-themes.tar.gz ]; then
+	gunzip linux-themes.tar.gz
+	tar xf linux-themes.tar
+	rm -rf linux-themes.tar
+	mv -f linux-themes/* /usr/share/themes
+	rm -rf linux-themes
+	echo "- Themes installed successfully"
+else
+	echo "- Error trying to install linux-themes.tar.gz"
+	exit 1
+fi
+
+## CPW OS Themes
+wget https://github.com/cpwos/cpw-openbox-dark-theme/archive/refs/heads/master.tar.gz -O cpw-openbox-dark-theme.tar.gz
+
+if [ -f cpw-openbox-dark-theme.tar.gz ]; then
+	gunzip cpw-openbox-dark-theme.tar.gz
+	tar xf cpw-openbox-dark-theme.tar
+	rm -rf cpw-openbox-dark-theme.tar
+	mv cpw-openbox-dark-theme-master /usr/share/themes/cpw-openbox-dark-theme
+	echo "- CPW Openbox Dark Theme installed successfully"
+else
+	echo "- Error trying to install cpw-openbox-dark-theme.tar.gz"
+	exit 1
+fi
+
+wget https://github.com/cpwos/cpw-openbox-light-theme/archive/refs/heads/master.tar.gz -O cpw-openbox-light-theme.tar.gz
+
+if [ -f cpw-openbox-light-theme.tar.gz ]; then
+	gunzip cpw-openbox-light-theme.tar.gz
+	tar xf cpw-openbox-light-theme.tar
+	rm -rf cpw-openbox-light-theme.tar
+	mv cpw-openbox-light-theme-master /usr/share/themes/cpw-openbox-light-theme
+	echo "- CPW Openbox Light Theme installed successfully"
+else
+	echo "- Error trying to install cpw-openbox-light-theme.tar.gz"
+	exit 1
+fi
